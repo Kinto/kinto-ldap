@@ -1,6 +1,17 @@
 kinto-ldap
 ==========
 
+|travis| |master-coverage|
+
+.. |master-coverage| image::
+    https://coveralls.io/repos/Kinto/kinto-ldap/badge.svg?branch=master
+    :alt: Coverage
+    :target: https://coveralls.io/r/Kinto/kinto-ldap
+
+.. |travis| image:: https://travis-ci.org/Kinto/kinto-ldap.svg?branch=master
+    :target: https://travis-ci.org/Kinto/kinto-ldap
+
+
 Validate Basic Auth provided user login and password with an LDAP server.
 
 
