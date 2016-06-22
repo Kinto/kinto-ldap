@@ -53,8 +53,6 @@ class LDAPBasicAuthAuthenticationPolicy(BasicAuthAuthenticationPolicy):
         credentials = self._get_credentials(request)
         if credentials:
             username, password = credentials
-            if not username:
-                return
 
             return 'ldap:%s' % username
 

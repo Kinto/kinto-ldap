@@ -48,7 +48,7 @@ Fill those settings with the values obtained during the application registration
 
     # ldap.cache_ttl_seconds = 30
     # ldap.endpoint = ldap://ldap.prod.mozaws.net
-    # ldap.fqn = uid={uid},ou=users,dc=mozilla
+    # ldap.fqn = "uid={uid},ou=users,dc=mozilla"
 
 
 If necessary, override default values for authentication policy:
