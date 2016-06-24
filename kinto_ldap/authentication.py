@@ -31,7 +31,7 @@ def user_checker(username, password, request):
 
         with cm.connection() as conn:
             try:
-                conn.bind(ldap_fqn.format(uid=username), password)
+                conn.bind(ldap_fqn.format(mail=username), password)
                 cache.set(cache_key, "1", ttl=cache_ttl)
                 return []
             except INVALID_CREDENTIALS:

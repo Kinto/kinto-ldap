@@ -6,8 +6,8 @@ from kinto_ldap.authentication import ldap_ping
 
 DEFAULT_SETTINGS = {
     'ldap.cache_ttl_seconds': 30,
-    'ldap.endpoint': 'ldap://ldap.prod.mozaws.net',
-    'ldap.fqn': 'uid={uid},ou=users,dc=mozilla',
+    'ldap.endpoint': 'ldap://ldap.db.scl3.mozilla.com',
+    'ldap.fqn': 'mail={mail},o=com,dc=mozilla',
 }
 
 
