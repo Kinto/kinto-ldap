@@ -71,10 +71,8 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
             2, self.request.registry.ldap_cm.connection.call_count)
 
     def test_returns_none_if_user_password_mismatch(self):
-        mocked = mock.MagicMock()
-        mocked.simple_bind_s.side_effect = ldap.INVALID_CREDENTIALS()
         self.request.registry.ldap_cm.connection \
-            .return_value.__enter__.return_value = mocked
+            .return_value.__enter__.side_effect = ldap.INVALID_CREDENTIALS()
         self.assertIsNone(self.policy.authenticated_userid(self.request))
 
     def test_forget_uses_realm(self):

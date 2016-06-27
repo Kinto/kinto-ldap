@@ -29,13 +29,12 @@ def user_checker(username, password, request):
     if cache_result is None:
         cm = request.registry.ldap_cm
 
-        with cm.connection() as conn:
-            try:
-                conn.simple_bind_s(ldap_fqn.format(mail=username), password)
+        try:
+            with cm.connection(ldap_fqn.format(mail=username), password):
                 cache.set(cache_key, "1", ttl=cache_ttl)
                 return []
-            except INVALID_CREDENTIALS:
-                cache.set(cache_key, "0", ttl=cache_ttl)
+        except INVALID_CREDENTIALS:
+            cache.set(cache_key, "0", ttl=cache_ttl)
 
     elif cache_result == "1":
         return []
