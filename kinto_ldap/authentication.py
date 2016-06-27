@@ -31,7 +31,7 @@ def user_checker(username, password, request):
 
         with cm.connection() as conn:
             try:
-                conn.bind(ldap_fqn.format(mail=username), password)
+                conn.simple_bind_s(ldap_fqn.format(mail=username), password)
                 cache.set(cache_key, "1", ttl=cache_ttl)
                 return []
             except INVALID_CREDENTIALS:
@@ -54,7 +54,7 @@ class LDAPBasicAuthAuthenticationPolicy(BasicAuthAuthenticationPolicy):
         if credentials:
             username, password = credentials
 
-            return 'ldap:%s' % username
+            return '%s' % username
 
 
 def ldap_ping(request):
