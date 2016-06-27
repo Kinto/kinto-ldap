@@ -26,7 +26,7 @@ ENTRY_POINTS = {}
 
 
 setup(name='kinto-ldap',
-      version='0.1.0',
+      version='0.2.0.dev0',
       description='LDAP support for Kinto',
       long_description=README + "\n\n" + CHANGELOG + "\n\n" + CONTRIBUTORS,
       license='Apache License (2.0)',
