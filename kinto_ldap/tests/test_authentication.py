@@ -47,7 +47,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
             .return_value.__enter__.return_value = mocked
 
         user_id = self.policy.authenticated_userid(self.request)
-        self.assertEqual("ldap:username", user_id)
+        self.assertEqual("username", user_id)
 
     def test_auth_verification_uses_cache(self):
         mocked = mock.MagicMock()
@@ -72,7 +72,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
 
     def test_returns_none_if_user_password_mismatch(self):
         mocked = mock.MagicMock()
-        mocked.bind.side_effect = ldap.INVALID_CREDENTIALS()
+        mocked.simple_bind_s.side_effect = ldap.INVALID_CREDENTIALS()
         self.request.registry.ldap_cm.connection \
             .return_value.__enter__.return_value = mocked
         self.assertIsNone(self.policy.authenticated_userid(self.request))
