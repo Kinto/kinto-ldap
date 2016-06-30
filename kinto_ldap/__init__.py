@@ -22,6 +22,10 @@ def includeme(config):
 
     defaults = {k: v for k, v in DEFAULT_SETTINGS.items() if k not in settings}
     config.add_settings(defaults)
+    config.add_api_capability(
+        "ldap",
+        description="Basic Auth user are validated against an LDAP server.",
+        url="https://github.com/mozilla-services/kinto-ldap")
 
     # Register heartbeat to ping the LDAP server.
     config.registry.heartbeats['ldap'] = ldap_ping
