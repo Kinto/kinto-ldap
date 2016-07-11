@@ -26,7 +26,7 @@ On Debian based systems::
     
 On RPM based systems::
 
-    sudo yum install openldap-devel openssl-devel
+    sudo yum install openldap-devel openssl-devel python-devel
 
 Installation
 ------------
