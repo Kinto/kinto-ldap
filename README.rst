@@ -18,10 +18,15 @@ Validate Basic Auth provided user login and password with an LDAP server.
 Dependencies
 ------------
 
-Before installing you will need the following system dependencies::
+Before installing you will need the following system dependencies:
+
+On Debian based systems::
 
     sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
+    
+On RPM based systems::
 
+    sudo yum install openldap-devel openssl-devel
 
 Installation
 ------------
