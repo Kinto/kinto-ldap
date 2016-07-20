@@ -6,8 +6,7 @@ functools32==3.2.3.post2
 futures==3.0.5
 iso8601==0.1.11
 jsonschema==2.5.1
-kinto==3.2.0
--e git+git@github.com:Kinto/kinto-ldap.git@c1fdd35856459ecbbf32e28f7083d34770c9a706#egg=kinto_ldap
+kinto==3.3.1
 ldappool==2.0.0
 PasteDeploy==1.5.2
 pyldap==2.4.25.1
