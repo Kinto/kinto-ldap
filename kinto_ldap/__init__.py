@@ -5,6 +5,8 @@ from kinto_ldap.authentication import ldap_ping
 
 
 DEFAULT_SETTINGS = {
+    'multiauth.policy.ldap.use': ('kinto_ldap.authentication.'
+                                  'LDAPBasicAuthAuthenticationPolicy'),
     'ldap.cache_ttl_seconds': 30,
     'ldap.endpoint': 'ldap://ldap.db.scl3.mozilla.com',
     'ldap.fqn': 'mail={mail},o=com,dc=mozilla',
