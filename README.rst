@@ -23,7 +23,7 @@ Before installing you will need the following system dependencies:
 On Debian based systems::
 
     sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
-    
+
 On RPM based systems::
 
     sudo yum install openldap-devel openssl-devel python-devel
@@ -50,15 +50,12 @@ And configure authentication policy using `pyramid_multiauth
 ::
 
     multiauth.policies = ldap
-    multiauth.policy.ldap.use = kinto_ldap.authentication.LDAPBasicAuthAuthenticationPolicy
 
 By default, it will rely on the cache configured in *Kinto*.
 
 
 Configuration
 -------------
-
-Fill those settings with the values obtained during the application registration:
 
 ::
 
@@ -72,3 +69,4 @@ If necessary, override default values for authentication policy:
 ::
 
     # multiauth.policy.ldap.realm = Realm
+    # multiauth.policy.ldap.use = kinto_ldap.authentication.LDAPBasicAuthAuthenticationPolicy
