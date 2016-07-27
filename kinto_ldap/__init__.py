@@ -1,7 +1,12 @@
+import pkg_resources
+
 from ldappool import ConnectionManager
 from pyramid.exceptions import ConfigurationError
 
 from kinto_ldap.authentication import ldap_ping
+
+#: Module version, as defined in PEP-0396.
+__version__ = pkg_resources.get_distribution(__package__).version
 
 
 DEFAULT_SETTINGS = {
@@ -25,7 +30,7 @@ def includeme(config):
     defaults = {k: v for k, v in DEFAULT_SETTINGS.items() if k not in settings}
     config.add_settings(defaults)
     config.add_api_capability(
-        "ldap",
+        "ldap", version=__version__,
         description="Basic Auth user are validated against an LDAP server.",
         url="https://github.com/mozilla-services/kinto-ldap")
 
