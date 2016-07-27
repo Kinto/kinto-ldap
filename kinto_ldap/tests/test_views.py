@@ -3,6 +3,7 @@ import webtest
 from kinto.core.utils import random_bytes_hex
 from pyramid.config import Configurator
 
+from kinto_ldap import __version__ as ldap_version
 from . import unittest
 
 
@@ -67,6 +68,7 @@ class CapabilityTestView(BaseWebTest, unittest.TestCase):
         capabilities = resp.json['capabilities']
         self.assertIn('ldap', capabilities)
         expected = {
+            "version": ldap_version,
             "url": "https://github.com/mozilla-services/kinto-ldap",
             "description": "Basic Auth user are validated against an "
                            "LDAP server."
