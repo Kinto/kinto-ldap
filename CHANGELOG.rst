@@ -10,6 +10,10 @@ This document describes changes between each past release.
 - Set default value for ``multiauth.policy.ldap.use`` (fixes #3)
 - Add the plugin version in the capability.
 
+**New features**
+
+- Add connection pool settings (fixes #10)
+
 **Bug fixes**
 
 - Fix heartbeat when server is unreachable (fixes #8)
