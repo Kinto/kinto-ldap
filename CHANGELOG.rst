@@ -4,7 +4,7 @@ CHANGELOG
 This document describes changes between each past release.
 
 
-0.2.0 (unreleased)
+0.2.0 (2016-11-02)
 ------------------
 
 - Set default value for ``multiauth.policy.ldap.use`` (fixes #3)
