@@ -60,7 +60,7 @@ def ldap_ping(request):
     """Verify if the LDAP server is ready."""
     cm = request.registry.ldap_cm
     try:
-        with cm.connection():
+        with cm.connection('mail=mail@test,o=com,dc=test', 'password'):
             ldap = True
     except Exception:
         logger.exception("Heartbeat Failure")

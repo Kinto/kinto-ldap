@@ -85,6 +85,6 @@ class HeartbeatTest(BaseWebTest, unittest.TestCase):
         return settings
 
     def test_heartbeat_returns_false(self):
-        resp = self.app.get('/__heartbeat__')
+        resp = self.app.get('/__heartbeat__', status=503)
         heartbeat = resp.json['ldap']
         self.assertFalse(heartbeat)
