@@ -59,14 +59,18 @@ Configuration
 
 ::
 
-    # ldap.cache_ttl_seconds = 30
-    # ldap.endpoint = ldap://ldap.prod.mozaws.net
-    # ldap.fqn = "uid={uid},ou=users,dc=mozilla"
+    multiauth.policy.ldap.use = kinto_ldap.authentication.LDAPBasicAuthAuthenticationPolicy
 
+    # kinto.ldap.cache_ttl_seconds = 30
+    # kinto.ldap.endpoint = ldap://ldap.prod.mozaws.net
+    # kinto.ldap.fqn = "uid={uid},ou=users,dc=mozilla"
 
 If necessary, override default values for authentication policy:
 
 ::
 
     # multiauth.policy.ldap.realm = Realm
-    # multiauth.policy.ldap.use = kinto_ldap.authentication.LDAPBasicAuthAuthenticationPolicy
+    # kinto.ldap.pool_size = 10
+    # kinto.ldap.pool_retry_max = 3
+    # kinto.ldap.pool_retry_delay = .1
+    # kinto.ldap.pool_timeout = 30

@@ -1,5 +1,7 @@
 import unittest
 
+import mock
+
 import kinto.core
 from pyramid.exceptions import ConfigurationError
 from pyramid import testing
@@ -26,3 +28,14 @@ class IncludeMeTest(unittest.TestCase):
         config.registry.heartbeats = {}
         config.include(includeme)
         self.assertIsNotNone(config.registry.heartbeats.get('ldap'))
+
+    def test_connection_manager_is_instantiated_with_settings(self):
+        config = testing.setUp()
+        kinto.core.initialize(config, '0.0.1')
+        with mock.patch('kinto_ldap.ConnectionManager') as mocked:
+            includeme(config)
+            mocked.assert_called_with(retry_delay=0.1,
+                                      retry_max=3,
+                                      size=10,
+                                      timeout=30,
+                                      uri='ldap://ldap.db.scl3.mozilla.com')
