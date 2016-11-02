@@ -13,6 +13,7 @@ This document describes changes between each past release.
 **Bug fixes**
 
 - Fix heartbeat when server is unreachable (fixes #8)
+- Returns None and log exception if LDAP backend cannot be reached (fixes #9)
 
 0.1.0 (2016-06-27)
 ------------------

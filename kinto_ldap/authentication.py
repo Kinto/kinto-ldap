@@ -2,6 +2,7 @@ import logging
 
 from kinto.core import utils
 from ldap import INVALID_CREDENTIALS
+from ldappool import BackendError
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,8 @@ def user_checker(username, password, request):
             with cm.connection(ldap_fqn.format(mail=username), password):
                 cache.set(cache_key, "1", ttl=cache_ttl)
                 return []
+        except BackendError:
+            logger.exception("LDAP error")
         except INVALID_CREDENTIALS:
             cache.set(cache_key, "0", ttl=cache_ttl)
 
