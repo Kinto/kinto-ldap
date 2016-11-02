@@ -1,9 +1,10 @@
+import unittest
+
 import kinto.core
 from pyramid.exceptions import ConfigurationError
 from pyramid import testing
 
 from kinto_ldap import includeme
-from . import unittest
 
 
 class IncludeMeTest(unittest.TestCase):

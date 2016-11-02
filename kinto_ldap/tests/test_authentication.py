@@ -1,11 +1,14 @@
 import base64
 import ldap
-import mock
+import unittest
 import time
 
+import mock
+
 from kinto.core.cache import memory as memory_backend
+from kinto.core.testing import DummyRequest
+
 from kinto_ldap import authentication, DEFAULT_SETTINGS
-from . import unittest, DummyRequest
 
 
 class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):

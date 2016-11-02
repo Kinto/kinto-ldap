@@ -1,10 +1,11 @@
+import unittest
+
 import kinto.core
 import webtest
 from kinto.core.utils import random_bytes_hex
 from pyramid.config import Configurator
 
 from kinto_ldap import __version__ as ldap_version
-from . import unittest
 
 
 def get_request_class(prefix):
@@ -74,3 +75,16 @@ class CapabilityTestView(BaseWebTest, unittest.TestCase):
                            "LDAP server."
         }
         self.assertEqual(expected, capabilities['ldap'])
+
+
+class HeartbeatTest(BaseWebTest, unittest.TestCase):
+
+    def get_app_settings(self, extras=None):
+        settings = super(HeartbeatTest, self).get_app_settings(extras)
+        settings['ldap.endpoint'] = 'ldap://ldap.with.unreachable.server.com'
+        return settings
+
+    def test_heartbeat_returns_false(self):
+        resp = self.app.get('/__heartbeat__', status=503)
+        heartbeat = resp.json['ldap']
+        self.assertFalse(heartbeat)
