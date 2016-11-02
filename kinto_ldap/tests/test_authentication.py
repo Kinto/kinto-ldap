@@ -4,6 +4,7 @@ import unittest
 import time
 
 import mock
+from ldappool import BackendError
 
 from kinto.core.cache import memory as memory_backend
 from kinto.core.testing import DummyRequest
@@ -28,6 +29,13 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
 
     def tearDown(self):
         self.backend.flush()
+
+    def test_returns_none_if_server_is_unreachable(self):
+        error = BackendError("unreachable", backend=None)
+        self.request.registry.ldap_cm.connection \
+            .return_value.__enter__.side_effect = error
+        user_id = self.policy.authenticated_userid(self.request)
+        self.assertIsNone(user_id)
 
     def test_returns_none_if_authorization_header_is_missing(self):
         self.request.headers.pop('Authorization')
