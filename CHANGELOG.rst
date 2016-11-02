@@ -7,7 +7,9 @@ This document describes changes between each past release.
 0.3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+**Bug fixes**
+
+- Fix heartbeat that would always return False
 
 
 0.2.0 (2016-11-02)
