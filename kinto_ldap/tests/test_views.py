@@ -87,14 +87,20 @@ class HeartbeatTest(BaseWebTest, unittest.TestCase):
         settings['ldap.pool_timeout'] = '1'
         return settings
 
-    def test_heartbeat_returns_false(self):
+    def test_heartbeat_returns_false_if_unreachable(self):
         unreachable = 'ldap://ldap.with.unreachable.server.com'
         app = self._get_test_app(settings={'ldap.endpoint': unreachable})
         resp = app.get('/__heartbeat__', status=503)
         heartbeat = resp.json['ldap']
         self.assertFalse(heartbeat)
 
-    def test_heartbeat_returns_true(self):
+    def test_heartbeat_returns_true_if_test_credentials_are_valid(self):
+        self.app.app.registry.ldap_cm = mock.MagicMock()
+        resp = self.app.get('/__heartbeat__')
+        heartbeat = resp.json['ldap']
+        self.assertTrue(heartbeat)
+
+    def test_heartbeat_returns_true_if_credentials_are_invalid(self):
         self.app.app.registry.ldap_cm = mock.MagicMock()
         self.app.app.registry.ldap_cm.connection \
             .return_value.__enter__.side_effect = INVALID_CREDENTIALS
