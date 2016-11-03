@@ -1,9 +1,12 @@
 import unittest
 
+import mock
+
 import kinto.core
 import webtest
 from kinto.core.utils import random_bytes_hex
 from pyramid.config import Configurator
+from ldap import INVALID_CREDENTIALS
 
 from kinto_ldap import __version__ as ldap_version
 
@@ -81,10 +84,26 @@ class HeartbeatTest(BaseWebTest, unittest.TestCase):
 
     def get_app_settings(self, extras=None):
         settings = super(HeartbeatTest, self).get_app_settings(extras)
-        settings['ldap.endpoint'] = 'ldap://ldap.with.unreachable.server.com'
+        settings['ldap.pool_timeout'] = '1'
         return settings
 
-    def test_heartbeat_returns_false(self):
-        resp = self.app.get('/__heartbeat__', status=503)
+    def test_heartbeat_returns_false_if_unreachable(self):
+        unreachable = 'ldap://ldap.with.unreachable.server.com'
+        app = self._get_test_app(settings={'ldap.endpoint': unreachable})
+        resp = app.get('/__heartbeat__', status=503)
         heartbeat = resp.json['ldap']
         self.assertFalse(heartbeat)
+
+    def test_heartbeat_returns_true_if_test_credentials_are_valid(self):
+        self.app.app.registry.ldap_cm = mock.MagicMock()
+        resp = self.app.get('/__heartbeat__')
+        heartbeat = resp.json['ldap']
+        self.assertTrue(heartbeat)
+
+    def test_heartbeat_returns_true_if_credentials_are_invalid(self):
+        self.app.app.registry.ldap_cm = mock.MagicMock()
+        self.app.app.registry.ldap_cm.connection \
+            .return_value.__enter__.side_effect = INVALID_CREDENTIALS
+        resp = self.app.get('/__heartbeat__')
+        heartbeat = resp.json['ldap']
+        self.assertTrue(heartbeat)

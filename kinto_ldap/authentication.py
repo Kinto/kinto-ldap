@@ -65,6 +65,8 @@ def ldap_ping(request):
     try:
         with cm.connection('mail=mail@test,o=com,dc=test', 'password'):
             ldap = True
+    except INVALID_CREDENTIALS:
+        ldap = True
     except Exception:
         logger.exception("Heartbeat Failure")
         ldap = False

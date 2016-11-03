@@ -91,20 +91,3 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         headers = policy.forget(self.request)
         self.assertEqual(headers[0],
                          ('WWW-Authenticate', 'Basic realm="Who"'))
-
-
-class LDAPPingTest(unittest.TestCase):
-    def setUp(self):
-        self.request = DummyRequest()
-        self.request.registry.settings = DEFAULT_SETTINGS
-
-    def test_returns_true_if_ok(self):
-        mocked = mock.MagicMock()
-        self.request.registry.ldap_cm.connection \
-            .return_value.__enter__.return_value = mocked
-        self.assertTrue(authentication.ldap_ping(self.request))
-
-    def test_returns_false_if_ko(self):
-        self.request.registry.ldap_cm.connection \
-            .return_value.__enter__.side_effect = ldap.INVALID_CREDENTIALS
-        self.assertFalse(authentication.ldap_ping(self.request))
