@@ -20,7 +20,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         self.request = DummyRequest()
         self.request.registry.cache = self.backend
         self.request.registry.ldap_cm = mock.MagicMock()
-        self.request.registry.ldap_cm.search.return_value = [("dn", {})]
+        self.request.registry.ldap_cm.return_value.__enter__.search_s.return_value = [("dn", {})]
         settings = DEFAULT_SETTINGS.copy()
         settings['userid_hmac_secret'] = 'abcdef'
         settings['ldap.cache_ttl_seconds'] = 0.01
@@ -62,6 +62,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
 
     def test_returns_ldap_userid(self):
         mocked = mock.MagicMock()
+        mocked.search_s.return_value = [("dn", {})]
         self.request.registry.ldap_cm.connection \
             .return_value.__enter__.return_value = mocked
 
@@ -85,11 +86,11 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
 
         self.policy.authenticated_userid(self.request)
         self.assertEqual(
-            2, self.request.registry.ldap_cm.connection.call_count)
+            1, self.request.registry.ldap_cm.connection.call_count)
         time.sleep(0.02)
         self.policy.authenticated_userid(self.request)
         self.assertEqual(
-            4, self.request.registry.ldap_cm.connection.call_count)
+            2, self.request.registry.ldap_cm.connection.call_count)
 
     def test_returns_none_if_user_password_mismatch(self):
         self.request.registry.ldap_cm.connection \
@@ -106,6 +107,16 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         mocked = mock.MagicMock()
         self.request.registry.ldap_cm.connection \
             .return_value.__enter__.return_value = mocked
-        self.request.registry.ldap_cm.search.return_value = [("dn", {}), ("dn2", {})]
+        self.request.registry.ldap_cm.return_value.__enter__.search_s.return_value = [
+            ("dn", {}), ("dn2", {})]
         user_id = self.policy.authenticated_userid(self.request)
         self.assertIsNone(user_id)
+
+    def test_bind_dn_and_bind_password_settings_are_used_if_specified(self):
+        self.request.registry.settings['ldap.bind_dn'] = "bind_dn"
+        self.request.registry.settings['ldap.bind_password'] = "bind_password"
+        mocked = mock.MagicMock()
+        self.request.registry.ldap_cm.connection.return_value.__enter__.return_value = mocked
+        self.policy.authenticated_userid(self.request)
+        self.assertEqual(1, self.request.registry.ldap_cm.connection.call_count)
+        self.request.registry.ldap_cm.connection.assert_called_with("bind_dn", "bind_password")

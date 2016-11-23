@@ -14,12 +14,12 @@ DEFAULT_SETTINGS = {
                                   'LDAPBasicAuthAuthenticationPolicy'),
     'ldap.cache_ttl_seconds': 30,
     'ldap.endpoint': 'ldap://ldap.db.scl3.mozilla.com',
+    'ldap.base_dn': 'dc=mozilla',
+    'ldap.filters': '(mail={mail})',
     'ldap.pool_size': 10,
     'ldap.pool_retry_max': 3,
     'ldap.pool_retry_delay': .1,
     'ldap.pool_timeout': 30,
-    'ldap.base_dn': 'dc=mozilla',
-    'ldap.filters': '(|(mail={username},o=com)(uid={username},ou=logins))',
 }
 
 

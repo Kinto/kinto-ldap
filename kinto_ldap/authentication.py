@@ -20,13 +20,13 @@ def user_checker(username, password, request):
     settings = request.registry.settings
     cache_ttl = settings['ldap.cache_ttl_seconds']
     hmac_secret = settings['userid_hmac_secret']
-    cache_key = utils.hmac_digest(hmac_secret, '%s:%s' % (username, password))
+    cache_key = utils.hmac_digest(hmac_secret, '{}:{}'.format(username, password))
 
     cache = request.registry.cache
     cache_result = cache.get(cache_key)
 
     bind_dn = settings.get('ldap.bind_dn')
-    bind_password = settings.get('bind.password')
+    bind_password = settings.get('ldap.bind_password')
 
     if cache_result is None:
         cm = request.registry.ldap_cm
@@ -35,12 +35,12 @@ def user_checker(username, password, request):
         # filter provided in the ldap.fqn_filters directive with the
         # username passed by the HTTP client.
         base_dn = settings['ldap.base_dn']
-        filters = settings['ldap.filters'].format(username=username)
+        filters = settings['ldap.filters'].format(mail=username)
 
         # 1. Search for the user
         try:
-            with cm.connection(bind_dn, bind_password):
-                results = cm.search(base_dn, SCOPE_SUBTREE, filters)
+            with cm.connection(bind_dn, bind_password) as conn:
+                results = conn.search_s(base_dn, SCOPE_SUBTREE, filters)
         except BackendError:
             logger.exception("LDAP error")
             return None
@@ -93,10 +93,10 @@ def ldap_ping(request):
     base_dn = settings['ldap.base_dn']
     cm = request.registry.ldap_cm
     try:
-        with cm.connection(bind_dn, bind_password):
+        with cm.connection(bind_dn, bind_password) as conn:
             # Perform a dumb query
-            filters = settings['ldap.filters'].format(username="demo")
-            cm.search(base_dn, SCOPE_SUBTREE, filters)
+            filters = settings['ldap.filters'].format(mail="demo")
+            conn.search_s(base_dn, SCOPE_SUBTREE, filters)
             ldap = True
     except Exception:
         logger.exception("Heartbeat Failure")
