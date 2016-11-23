@@ -40,6 +40,7 @@ def user_checker(username, password, request):
         # 1. Search for the user
         try:
             with cm.connection(bind_dn, bind_password) as conn:
+                # import pdb; pdb.set_trace()
                 results = conn.search_s(base_dn, SCOPE_SUBTREE, filters)
         except BackendError:
             logger.exception("LDAP error")
