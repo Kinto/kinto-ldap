@@ -39,6 +39,16 @@ def includeme(config):
         description="Basic Auth user are validated against an LDAP server.",
         url="https://github.com/mozilla-services/kinto-ldap")
 
+    try:
+        settings['ldap.filters'].format(mail='test')
+    except KeyError:
+        msg = "ldap.filters should take a 'mail' argument only, got: %r" % settings['ldap.filters']
+        raise ConfigurationError(msg)
+    else:
+        if settings['ldap.filters'].format(mail='test') == settings['ldap.filters']:
+            msg = "ldap.filters should take a 'mail' argument, got: %r" % settings['ldap.filters']
+            raise ConfigurationError(msg)
+
     # Register heartbeat to ping the LDAP server.
     config.registry.heartbeats['ldap'] = ldap_ping
 

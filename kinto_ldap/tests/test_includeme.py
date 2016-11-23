@@ -39,3 +39,23 @@ class IncludeMeTest(unittest.TestCase):
                                       size=10,
                                       timeout=30,
                                       uri='ldap://ldap.db.scl3.mozilla.com')
+
+    def test_include_fails_if_ldap_filters_contains_multiple_keys(self):
+        config = testing.setUp()
+        settings = config.get_settings()
+        settings['ldap.filters'] = '{uid}{mail}'
+        kinto.core.initialize(config, '0.0.1')
+        with self.assertRaises(ConfigurationError) as e:
+            config.include(includeme)
+        message = "ldap.filters should take a 'mail' argument only, got: '{uid}{mail}'"
+        self.assertEqual(str(e.exception), message)
+
+    def test_include_fails_if_ldap_filters_is_missing_the_mail_key(self):
+        config = testing.setUp()
+        settings = config.get_settings()
+        settings['ldap.filters'] = 'toto'
+        kinto.core.initialize(config, '0.0.1')
+        with self.assertRaises(ConfigurationError) as e:
+            config.include(includeme)
+        message = "ldap.filters should take a 'mail' argument, got: 'toto'"
+        self.assertEqual(str(e.exception), message)
