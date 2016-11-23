@@ -71,6 +71,8 @@ If necessary, override default values for authentication policy:
 ::
 
     # multiauth.policy.ldap.realm = Realm
+    # kinto.ldap.base_dn = dc=mozilla
+    # kinto.ldap.filters = (mail={mail})
     # kinto.ldap.pool_size = 10
     # kinto.ldap.pool_retry_max = 3
     # kinto.ldap.pool_retry_delay = .1
