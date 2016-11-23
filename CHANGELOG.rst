@@ -7,7 +7,7 @@ This document describes changes between each past release.
 0.3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Support login from multiple DN from the same LDAP server (#16)
 
 
 0.2.1 (2016-11-03)
