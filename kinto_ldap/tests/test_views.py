@@ -6,7 +6,6 @@ import kinto.core
 import webtest
 from kinto.core.utils import random_bytes_hex
 from pyramid.config import Configurator
-from ldap import INVALID_CREDENTIALS
 
 from kinto_ldap import __version__ as ldap_version
 
@@ -96,14 +95,6 @@ class HeartbeatTest(BaseWebTest, unittest.TestCase):
 
     def test_heartbeat_returns_true_if_test_credentials_are_valid(self):
         self.app.app.registry.ldap_cm = mock.MagicMock()
-        resp = self.app.get('/__heartbeat__')
-        heartbeat = resp.json['ldap']
-        self.assertTrue(heartbeat)
-
-    def test_heartbeat_returns_true_if_credentials_are_invalid(self):
-        self.app.app.registry.ldap_cm = mock.MagicMock()
-        self.app.app.registry.ldap_cm.connection \
-            .return_value.__enter__.side_effect = INVALID_CREDENTIALS
         resp = self.app.get('/__heartbeat__')
         heartbeat = resp.json['ldap']
         self.assertTrue(heartbeat)
