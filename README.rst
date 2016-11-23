@@ -61,9 +61,10 @@ Configuration
 
     multiauth.policy.ldap.use = kinto_ldap.authentication.LDAPBasicAuthAuthenticationPolicy
 
-    # kinto.ldap.cache_ttl_seconds = 30
-    # kinto.ldap.endpoint = ldap://ldap.prod.mozaws.net
-    # kinto.ldap.fqn = "uid={uid},ou=users,dc=mozilla"
+    kinto.ldap.cache_ttl_seconds = 30
+    kinto.ldap.endpoint = ldap://ldap.prod.mozaws.net
+    # kinto.ldap.bind_dn = uid=read_user,ou=logins,dc=mozilla
+    # kinto.ldap.bind_password = user_password
 
 If necessary, override default values for authentication policy:
 

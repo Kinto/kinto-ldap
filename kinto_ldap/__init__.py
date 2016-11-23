@@ -18,7 +18,8 @@ DEFAULT_SETTINGS = {
     'ldap.pool_retry_max': 3,
     'ldap.pool_retry_delay': .1,
     'ldap.pool_timeout': 30,
-    'ldap.fqn': 'mail={mail},o=com,dc=mozilla',
+    'ldap.base_dn': 'dc=mozilla',
+    'ldap.filters': '(|(mail={username},o=com)(uid={username},ou=logins))',
 }
 
 

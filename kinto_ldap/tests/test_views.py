@@ -99,11 +99,3 @@ class HeartbeatTest(BaseWebTest, unittest.TestCase):
         resp = self.app.get('/__heartbeat__')
         heartbeat = resp.json['ldap']
         self.assertTrue(heartbeat)
-
-    def test_heartbeat_returns_true_if_credentials_are_invalid(self):
-        self.app.app.registry.ldap_cm = mock.MagicMock()
-        self.app.app.registry.ldap_cm.connection \
-            .return_value.__enter__.side_effect = INVALID_CREDENTIALS
-        resp = self.app.get('/__heartbeat__')
-        heartbeat = resp.json['ldap']
-        self.assertTrue(heartbeat)

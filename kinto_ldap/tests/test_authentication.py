@@ -20,6 +20,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         self.request = DummyRequest()
         self.request.registry.cache = self.backend
         self.request.registry.ldap_cm = mock.MagicMock()
+        self.request.registry.ldap_cm.search.return_value = [("dn", {})]
         settings = DEFAULT_SETTINGS.copy()
         settings['userid_hmac_secret'] = 'abcdef'
         settings['ldap.cache_ttl_seconds'] = 0.01
@@ -34,6 +35,13 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         error = BackendError("unreachable", backend=None)
         self.request.registry.ldap_cm.connection \
             .return_value.__enter__.side_effect = error
+        user_id = self.policy.authenticated_userid(self.request)
+        self.assertIsNone(user_id)
+
+    def test_returns_none_if_server_is_unreachable_the_second_time(self):
+        error = BackendError("unreachable", backend=None)
+        self.request.registry.ldap_cm.connection \
+            .return_value.__enter__.side_effect = [mock.MagicMock(), error]
         user_id = self.policy.authenticated_userid(self.request)
         self.assertIsNone(user_id)
 
@@ -68,7 +76,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         self.policy.authenticated_userid(self.request)
         self.policy.authenticated_userid(self.request)
         self.assertEqual(
-            1, self.request.registry.ldap_cm.connection.call_count)
+            2, self.request.registry.ldap_cm.connection.call_count)
 
     def test_auth_verification_cache_has_ttl(self):
         mocked = mock.MagicMock()
@@ -76,14 +84,16 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
             .return_value.__enter__.return_value = mocked
 
         self.policy.authenticated_userid(self.request)
+        self.assertEqual(
+            2, self.request.registry.ldap_cm.connection.call_count)
         time.sleep(0.02)
         self.policy.authenticated_userid(self.request)
         self.assertEqual(
-            2, self.request.registry.ldap_cm.connection.call_count)
+            4, self.request.registry.ldap_cm.connection.call_count)
 
     def test_returns_none_if_user_password_mismatch(self):
         self.request.registry.ldap_cm.connection \
-            .return_value.__enter__.side_effect = ldap.INVALID_CREDENTIALS()
+            .return_value.__enter__.side_effect = [mock.MagicMock(), ldap.INVALID_CREDENTIALS()]
         self.assertIsNone(self.policy.authenticated_userid(self.request))
 
     def test_forget_uses_realm(self):
@@ -91,3 +101,11 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         headers = policy.forget(self.request)
         self.assertEqual(headers[0],
                          ('WWW-Authenticate', 'Basic realm="Who"'))
+
+    def test_returns_none_if_multiple_ldap_search_results_matches(self):
+        mocked = mock.MagicMock()
+        self.request.registry.ldap_cm.connection \
+            .return_value.__enter__.return_value = mocked
+        self.request.registry.ldap_cm.search.return_value = [("dn", {}), ("dn2", {})]
+        user_id = self.policy.authenticated_userid(self.request)
+        self.assertIsNone(user_id)

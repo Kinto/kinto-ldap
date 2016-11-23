@@ -1,7 +1,7 @@
 import logging
 
 from kinto.core import utils
-from ldap import INVALID_CREDENTIALS
+from ldap import INVALID_CREDENTIALS, SCOPE_SUBTREE
 from ldappool import BackendError
 from pyramid.authentication import BasicAuthAuthenticationPolicy
 
@@ -25,13 +25,39 @@ def user_checker(username, password, request):
     cache = request.registry.cache
     cache_result = cache.get(cache_key)
 
-    ldap_fqn = settings['ldap.fqn']
+    bind_dn = settings.get('ldap.bind_dn')
+    bind_password = settings.get('bind.password')
 
     if cache_result is None:
         cm = request.registry.ldap_cm
 
+        # 0. Generate a search filter by combining the attribute and
+        # filter provided in the ldap.fqn_filters directive with the
+        # username passed by the HTTP client.
+        base_dn = settings['ldap.base_dn']
+        filters = settings['ldap.filters'].format(username=username)
+
+        # 1. Search for the user
         try:
-            with cm.connection(ldap_fqn.format(mail=username), password):
+            with cm.connection(bind_dn, bind_password):
+                results = cm.search(base_dn, SCOPE_SUBTREE, filters)
+        except BackendError:
+            logger.exception("LDAP error")
+            return None
+
+        if len(results) != 1:
+            # If the search does not return exactly one entry, deny or decline access.
+            return None
+
+        dn, entry = results[0]
+        user_dn = str(dn)
+
+        # 2. Fetch the distinguished name of the entry retrieved from
+        # the search and attempt to bind to the LDAP server using that
+        # DN and the password passed by the HTTP client. If the bind
+        # is unsuccessful, deny or decline access.
+        try:
+            with cm.connection(user_dn, password):
                 cache.set(cache_key, "1", ttl=cache_ttl)
                 return []
         except BackendError:
@@ -61,12 +87,17 @@ class LDAPBasicAuthAuthenticationPolicy(BasicAuthAuthenticationPolicy):
 
 def ldap_ping(request):
     """Verify if the LDAP server is ready."""
+    settings = request.registry.settings
+    bind_dn = settings.get('ldap.bind_dn')
+    bind_password = settings.get('ldap.bind_password')
+    base_dn = settings['ldap.base_dn']
     cm = request.registry.ldap_cm
     try:
-        with cm.connection('mail=mail@test,o=com,dc=test', 'password'):
+        with cm.connection(bind_dn, bind_password):
+            # Perform a dumb query
+            filters = settings['ldap.filters'].format(username="demo")
+            cm.search(base_dn, SCOPE_SUBTREE, filters)
             ldap = True
-    except INVALID_CREDENTIALS:
-        ldap = True
     except Exception:
         logger.exception("Heartbeat Failure")
         ldap = False
