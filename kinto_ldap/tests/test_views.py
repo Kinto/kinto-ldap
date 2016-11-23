@@ -6,7 +6,6 @@ import kinto.core
 import webtest
 from kinto.core.utils import random_bytes_hex
 from pyramid.config import Configurator
-from ldap import INVALID_CREDENTIALS
 
 from kinto_ldap import __version__ as ldap_version
 
