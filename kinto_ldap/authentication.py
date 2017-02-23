@@ -3,7 +3,7 @@ import logging
 from kinto.core import utils
 from ldap import INVALID_CREDENTIALS, SCOPE_SUBTREE
 from ldappool import BackendError
-from pyramid.authentication import BasicAuthAuthenticationPolicy
+from pyramid import authentication as base_auth
 
 logger = logging.getLogger(__name__)
 
@@ -72,11 +72,25 @@ def user_checker(username, password, request):
     return None
 
 
-class LDAPBasicAuthAuthenticationPolicy(BasicAuthAuthenticationPolicy):
+class LDAPBasicAuthAuthenticationPolicy(base_auth.BasicAuthAuthenticationPolicy):
     """Basic auth with user credentials checked against an LDAP server."""
     def __init__(self, *args, **kwargs):
         super(LDAPBasicAuthAuthenticationPolicy, self).__init__(
             user_checker, *args, **kwargs)
+
+    def effective_principals(self, request):
+        # Bypass default Pyramid construction of principals because
+        # Pyramid multiauth already adds userid, Authenticated and Everyone
+        # principals.
+        return []
+
+    def _get_credentials(self, request):
+        # Pyramid < 1.8
+        policy = base_auth.BasicAuthAuthenticationPolicy
+        if hasattr(policy, '_get_credentials'):  # pragma: no cover
+            return policy._get_credentials(self, request)
+        # Pyramid > 1.8
+        return base_auth.extract_http_basic_credentials(request)  # pragma: no cover
 
     def unauthenticated_userid(self, request):
         credentials = self._get_credentials(request)

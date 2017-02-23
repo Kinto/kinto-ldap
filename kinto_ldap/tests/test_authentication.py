@@ -15,7 +15,7 @@ from kinto_ldap import authentication, DEFAULT_SETTINGS
 class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
     def setUp(self):
         self.policy = authentication.LDAPBasicAuthAuthenticationPolicy()
-        self.backend = memory_backend.Cache(cache_prefix="tests")
+        self.backend = memory_backend.Cache(cache_prefix="tests", cache_max_size_bytes=524288)
 
         self.request = DummyRequest()
         self.request.registry.cache = self.backend
@@ -25,6 +25,7 @@ class LDAPBasicAuthAuthenticationPolicyTest(unittest.TestCase):
         self.request.registry.ldap_cm.connection.return_value.__enter__.return_value = self.conn
         settings = DEFAULT_SETTINGS.copy()
         settings['userid_hmac_secret'] = 'abcdef'
+        settings['cache_max_size_bytes'] = 524288
         settings['ldap.cache_ttl_seconds'] = 0.01
         self.request.registry.settings = settings
         self.request.headers['Authorization'] = (
