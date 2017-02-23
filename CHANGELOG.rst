@@ -7,7 +7,9 @@ This document describes changes between each past release.
 0.4.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+**Bug fixes**
+
+- Fix support with Kinto 6 and Python 3. (#18)
 
 
 0.3.0 (2016-11-23)
