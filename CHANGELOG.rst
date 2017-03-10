@@ -4,7 +4,7 @@ CHANGELOG
 This document describes changes between each past release.
 
 
-0.4.0 (unreleased)
+0.3.1 (2017-03-10)
 ------------------
 
 **Bug fixes**
