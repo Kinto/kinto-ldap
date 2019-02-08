@@ -2,8 +2,8 @@ import base64
 import ldap
 import unittest
 import time
+from unittest import mock
 
-import mock
 from ldappool import BackendError
 
 from kinto.core.cache import memory as memory_backend

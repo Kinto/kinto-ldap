@@ -1,5 +1,4 @@
 coverage
-mock
 pytest
 pytest-cache
 pytest-cov
