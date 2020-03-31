@@ -2,5 +2,4 @@ coverage
 pytest
 pytest-cache
 pytest-cov
-pytest-sugar
 webtest
